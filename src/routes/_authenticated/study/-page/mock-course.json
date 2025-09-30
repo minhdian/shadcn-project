@@ -1,0 +1,306 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "title": "English for Beginners",
+      "image": "https://example.com/images/beginner.jpg",
+      "description": "Khóa học dành cho người mới bắt đầu học tiếng Anh.",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "Basic Greetings",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Saying Hello and Goodbye",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=o3K_HbpWNpg",
+              "subtitle": "https://example.com/subtitles/hello-goodbye.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Introducing Yourself",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+              "subtitle": "https://example.com/subtitles/introduce-yourself.vtt"
+            },
+            {
+              "id": 3,
+              "title": "Introducing Yourself",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+              "subtitle": "https://example.com/subtitles/introduce-yourself.vtt"
+            },
+            {
+              "id": 4,
+              "title": "Introducing Yourself",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+              "subtitle": "https://example.com/subtitles/introduce-yourself.vtt"
+            },
+            {
+              "id": 5,
+              "title": "Introducing Yourself",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+              "subtitle": "https://example.com/subtitles/introduce-yourself.vtt"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Numbers and Colors",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Learning Numbers",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=_UR-l3QI2nE",
+              "subtitle": "https://example.com/subtitles/numbers.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Basic Colors",
+              "type": "video",
+              "url": "https://www.youtube.com/watch?v=uoxCWXGwTvU",
+              "subtitle": "https://example.com/subtitles/colors.vtt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Everyday English Conversations",
+      "image": "https://example.com/images/conversation.jpg",
+      "description": "Khóa học giúp bạn giao tiếp trong các tình huống hằng ngày.",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "At the Restaurant",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Ordering Food",
+              "type": "video",
+              "url": "https://example.com/videos/ordering-food.mp4",
+              "subtitle": "https://example.com/subtitles/ordering-food.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Paying the Bill",
+              "type": "audio",
+              "url": "https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
+              "subtitle": "https://example.com/subtitles/paying-bill.vtt"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "At the Airport",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Checking In",
+              "type": "video",
+              "url": "https://example.com/videos/checkin.mp4",
+              "subtitle": "https://example.com/subtitles/checkin.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Asking for Directions",
+              "type": "audio",
+              "url": "https://example.com/audios/directions.mp3",
+              "subtitle": "https://example.com/subtitles/directions.vtt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Business English",
+      "image": "https://example.com/images/business.jpg",
+      "description": "Tiếng Anh trong môi trường công sở và kinh doanh.",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "Office Communication",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Email Writing",
+              "type": "video",
+              "url": "https://example.com/videos/email-writing.mp4",
+              "subtitle": "https://example.com/subtitles/email-writing.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Phone Conversations",
+              "type": "audio",
+              "url": "https://example.com/audios/phone-call.mp3",
+              "subtitle": "https://example.com/subtitles/phone-call.vtt"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Meetings",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Meeting Vocabulary",
+              "type": "video",
+              "url": "https://example.com/videos/meeting.mp4",
+              "subtitle": "https://example.com/subtitles/meeting.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Presentations",
+              "type": "video",
+              "url": "https://example.com/videos/presentation.mp4",
+              "subtitle": "https://example.com/subtitles/presentation.vtt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "English Grammar Essentials",
+      "image": "https://example.com/images/grammar.jpg",
+      "description": "Ôn tập và nắm vững ngữ pháp cơ bản.",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "Tenses",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Present Simple",
+              "type": "video",
+              "url": "https://example.com/videos/present-simple.mp4",
+              "subtitle": "https://example.com/subtitles/present-simple.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Past Simple",
+              "type": "video",
+              "url": "https://example.com/videos/past-simple.mp4",
+              "subtitle": "https://example.com/subtitles/past-simple.vtt"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Articles",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Using 'a', 'an', 'the'",
+              "type": "audio",
+              "url": "https://example.com/audios/articles.mp3",
+              "subtitle": "https://example.com/subtitles/articles.vtt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "English Listening Practice",
+      "image": "https://example.com/images/listening.jpg",
+      "description": "Luyện nghe qua hội thoại và câu chuyện thực tế.",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "Daily Conversations",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Shopping",
+              "type": "audio",
+              "url": "https://example.com/audios/shopping.mp3",
+              "subtitle": "https://example.com/subtitles/shopping.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Weather Talk",
+              "type": "audio",
+              "url": "https://example.com/audios/weather.mp3",
+              "subtitle": "https://example.com/subtitles/weather.vtt"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Short Stories",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "The Lost Wallet",
+              "type": "audio",
+              "url": "https://example.com/audios/wallet.mp3",
+              "subtitle": "https://example.com/subtitles/wallet.vtt"
+            },
+            {
+              "id": 2,
+              "title": "A Day at the Park",
+              "type": "audio",
+              "url": "https://example.com/audios/park.mp3",
+              "subtitle": "https://example.com/subtitles/park.vtt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "English Pronunciation",
+      "image": "https://example.com/images/pronunciation.jpg",
+      "description": "Phát âm chuẩn theo giọng Anh - Mỹ.",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "Vowels",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Short Vowels",
+              "type": "video",
+              "url": "https://example.com/videos/short-vowels.mp4",
+              "subtitle": "https://example.com/subtitles/short-vowels.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Long Vowels",
+              "type": "video",
+              "url": "https://example.com/videos/long-vowels.mp4",
+              "subtitle": "https://example.com/subtitles/long-vowels.vtt"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Consonants",
+          "lessons": [
+            {
+              "id": 1,
+              "title": "Plosives",
+              "type": "audio",
+              "url": "https://example.com/audios/plosives.mp3",
+              "subtitle": "https://example.com/subtitles/plosives.vtt"
+            },
+            {
+              "id": 2,
+              "title": "Fricatives",
+              "type": "audio",
+              "url": "https://example.com/audios/fricatives.mp3",
+              "subtitle": "https://example.com/subtitles/fricatives.vtt"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

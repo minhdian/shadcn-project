@@ -21,6 +21,8 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  Book,
+  BookOpen,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -52,6 +54,11 @@ export const sidebarData: SidebarData = {
     {
       title: 'General',
       items: [
+        {
+          title: 'Study',
+          url: '/study',
+          icon: BookOpen,
+        },
         {
           title: 'Dashboard',
           url: '/',
