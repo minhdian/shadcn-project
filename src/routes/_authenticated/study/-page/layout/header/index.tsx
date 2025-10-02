@@ -1,7 +1,7 @@
 import { Bell, BookOpen, Command, Search, Settings, User } from "lucide-react";
 import { layoutStore } from "../store"; 
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import mockCourseData from "../../mock-course.json";
 import { favoriteStore } from "../storeFavorite";
 
@@ -28,7 +28,7 @@ interface Chapter {
 }
 export const HeaderStudy = observer(() => {
     const { isShowControl, toggleControl, isShowFavorite, toggleFavorite } = layoutStore;
-     const { selectedCourse, setSelectedCourse } = favoriteStore;
+     const { selectedCourse, setSelectedCourse, setCourses } = favoriteStore;
     const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   // Convert mock data to proper types
@@ -42,6 +42,10 @@ export const HeaderStudy = observer(() => {
       })),
     })),
   }));
+  useEffect(() => {
+    setCourses(courses);
+  }, [setCourses]);
+
   // Handle click outside dialog
   const handleOverlayClick = (e: React.MouseEvent) => {
       if (e.target === e.currentTarget) {

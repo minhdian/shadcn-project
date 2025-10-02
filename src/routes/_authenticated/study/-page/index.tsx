@@ -23,6 +23,9 @@ import { Footer } from "./layout/footer";
 import { playerStore, usePlayerStore } from "./layout/storePlayer";
 import { usePlayerRef } from "./layout/useRefPlayer";
 import { layoutStore } from "./layout/store";
+import { savedSubtitlesStore } from "./layout/storeSavedSubtitle";
+import { ac } from "node_modules/@faker-js/faker/dist/airline-CLphikKp";
+import { toJS } from "mobx";
 
 
 interface Course {
@@ -48,14 +51,26 @@ interface Chapter {
 }
 
 export const Study = observer(() => {
-  
+
+  const { addSavedSubtitle } = savedSubtitlesStore;
   const { isShowFavorite } = layoutStore;
-  const { selectedCourse, activeChapter, setActiveChapter, currentLesson, setCurrentLesson, setLessonSelectHandler, getNextLesson } = favoriteStore;
-  const {
-    
+  const { 
+    selectedCourse, 
+    activeChapter, 
+    setActiveChapter, 
+    currentLesson, 
+    setCurrentLesson, 
+    setLessonSelectHandler, 
+    getNextLesson, 
+    setPlaySavedSubtitleHandler,
+    setSelectedCourse,
+    courses,
+   } = favoriteStore;
+  const {    
     setAudioRef,
     playerControls,
     setPLayerControls,
+    setPlayerCurrentTime
   } = playerStore;
 
   // UI Store
@@ -96,12 +111,6 @@ export const Study = observer(() => {
   const { playerRef, handlePlayerRef } = usePlayerStore();
 
   // Event handlers
-  useEffect(() => {
-    // Set player ref trong store khi component mount
-    // if (playerRef.current) {
-    //   setPlayerRef(playerRef.current);
-    // } 
-  }, []);
 
   useEffect(() => {
     // Set refs trong store khi component mount
@@ -115,20 +124,29 @@ export const Study = observer(() => {
   };
 
   const handleLessonSelect = (lesson: Lesson, autoPlay: boolean = false) => {
-    console.log("handleLessonSelect called:", {
+    console.log("📚 handleLessonSelect called:", {
       lesson: lesson.title,
+      lessonId: lesson.id,
       autoPlay,
+      previousLesson: currentLesson?.title || "none"
     });
+    
     setCurrentLesson(lesson);
+    console.log("📚 Setting currentSubtitles to subtitles array, length:", subtitles.length);
     setCurrentSubtitles(subtitles);
 
     setPLayerControls({ isPlaying: autoPlay , played: 0, playedSeconds: 0, seeking: false, duration: 0 }); // Chỉ phát nếu autoPlay = true
+    
+    console.log("📚 Player controls set:", { isPlaying: autoPlay });
 
     // Reset thời gian và duration khi chuyển lesson
   };
   // Đăng ký callback khi component mount
+  // Set handler vào favoriteStore
   useEffect(() => {
     setLessonSelectHandler(handleLessonSelect);
+    // Set handler cho play saved subtitle
+    setPlaySavedSubtitleHandler(handlePlaySavedSubtitle);
   }, [setLessonSelectHandler]);
   
   const handleSubtitleClick = (subtitle: (typeof subtitles)[0]) => {
@@ -165,15 +183,19 @@ export const Study = observer(() => {
 
   // Chuyển đổi thời gian từ "00:00:00,000" sang giây
   const timeToSeconds = (timeString: string) => {
+    //console.log("⏰ Converting time string:", timeString);
     const [hours, minutes, seconds] = timeString.split(":");
     const [secs, ms] = seconds.split(",");
 
-    return (
+    const result = (
       Number(hours) * 3600 +
       Number(minutes) * 60 +
       Number(secs) +
       Number(ms) / 1000
     );
+    
+    //console.log("⏰ Converted to seconds:", result);
+    return result;
   };
 
   // Hàm theo dõi subtitle dựa trên thời gian hiện tại
@@ -181,12 +203,9 @@ export const Study = observer(() => {
     currentTime: number,
     prioritySubtitleId?: number
   ) => {
-    console.log(
-      "Updating subtitle for time:",
-      currentTime,
-      "Priority ID:",
-      prioritySubtitleId
-    );
+    // console.log(
+    //   "Updating subtitle for time:",currentTime,
+    // );
 
     // Nếu vừa click subtitle thủ công (trong vòng 500ms), không auto update
     if (
@@ -379,7 +398,195 @@ export const Study = observer(() => {
     setPLayerControls({ duration: duration });
   };
   
-  // const { played, loop } = state;
+  // Handler cho save subtitle
+  const handleSaveSubtitle = (subtitle: any) => {
+
+    if (!selectedCourse || !activeChapter || !currentLesson) {
+      console.warn("Missing context for saving subtitle");
+      return;
+    }
+
+    addSavedSubtitle(
+      subtitle,
+      selectedCourse,
+      activeChapter,
+      currentLesson
+    );
+  };
+  
+  // Handler cho play saved subtitle
+  const handlePlaySavedSubtitle = (savedSubtitle: any) => {
+    console.log("=== PLAY SAVED SUBTITLE START ===");
+    console.log("Input savedSubtitle:", toJS(savedSubtitle));
+    console.log("Current state before play:", {
+      selectedCourse: selectedCourse?.id,
+      activeChapter: activeChapter?.id,
+      currentLesson: currentLesson?.id,
+      currentSubtitle: currentSubtitle,
+      currentSubtitlesLength: currentSubtitles.length
+    });
+
+    // 1. Tìm target course từ courses array
+    console.log("Available courses:", favoriteStore.courses.map(c => ({ id: c.id, title: c.title })));
+    const targetCourse = favoriteStore.courses.find(c => c.id === savedSubtitle.courseId);
+    
+    if (!targetCourse) {
+      console.error("❌ Target course not found:", savedSubtitle.courseId);
+      console.log("Available course IDs:", favoriteStore.courses.map(c => c.id));
+      return;
+    }
+    console.log("✅ Found target course:", targetCourse.title);
+
+    // 2. Tìm target chapter từ target course
+    console.log("Available chapters in course:", targetCourse.chapters.map(c => ({ id: c.id, title: c.title })));
+    const targetChapter = targetCourse.chapters.find(c => c.id === savedSubtitle.chapterId);
+    
+    if (!targetChapter) {
+      console.error("❌ Target chapter not found:", savedSubtitle.chapterId);
+      console.log("Available chapter IDs:", targetCourse.chapters.map(c => c.id));
+      return;
+    }
+    console.log("✅ Found target chapter:", targetChapter.title);
+
+    // 3. Tìm target lesson từ target chapter
+    console.log("Available lessons in chapter:", targetChapter.lessons.map(l => ({ id: l.id, title: l.title })));
+    const targetLesson = targetChapter.lessons.find(l => l.id === savedSubtitle.lessonId);
+    
+    if (!targetLesson) {
+      console.error("❌ Target lesson not found:", savedSubtitle.lessonId);
+      console.log("Available lesson IDs:", targetChapter.lessons.map(l => l.id));
+      return;
+    }
+    console.log("✅ Found target lesson:", targetLesson.title);
+
+    // 4-5. Set course và chapter
+    console.log("⚙️ Setting course and chapter...");
+    if (!selectedCourse || selectedCourse.id !== savedSubtitle.courseId) {
+      console.log("🔄 Setting course:", targetCourse.title);
+      setSelectedCourse(targetCourse);
+    } else {
+      console.log("✅ Course already selected");
+    }
+
+    if (!activeChapter || activeChapter.id !== savedSubtitle.chapterId) {
+      console.log("🔄 Setting chapter:", targetChapter.title);
+      setActiveChapter(targetChapter);
+    } else {
+      console.log("✅ Chapter already selected");
+    }
+
+    // 6. Set lesson
+    console.log("🔄 Setting lesson:", targetLesson.title);
+    handleLessonSelect(targetLesson, true);
+    
+    // 7. Seek với timeout
+    console.log("⏰ Setting timeout for seek operation...");
+    setTimeout(() => {
+      console.log("🎯 TIMEOUT EXECUTED - Starting seek operation");
+      console.log("Current state in timeout:", {
+        selectedCourse: selectedCourse?.title,
+        activeChapter: activeChapter?.title,
+        currentLesson: currentLesson?.title,
+        playerRef: !!playerRef,
+        audioRefCurrent: !!audioRef.current,
+        currentSubtitlesLength: currentSubtitles.length
+      });
+
+      const targetTime = timeToSeconds(savedSubtitle.subtitleStart);
+      console.log("Target time calculated:", targetTime);
+      setPlayerCurrentTime(targetTime);
+      
+      if (targetLesson.type === "video" && playerRef) {
+        console.log("🎥 Seeking video to:", targetTime);
+        console.log("Video player state:", {
+          currentTime: playerRef.currentTime,
+          duration: playerRef.duration,
+          readyState: playerRef.readyState
+        });
+        playerRef.currentTime = targetTime;
+        console.log("Video currentTime after seek:", playerRef.currentTime);
+      } else if (targetLesson.type === "audio" && audioRef.current) {
+        console.log("🎵 Seeking audio to:", targetTime);
+        console.log("Audio player state:", {
+          currentTime: audioRef.current.currentTime,
+          duration: audioRef.current.duration,
+          readyState: audioRef.current.readyState
+        });
+        audioRef.current.currentTime = targetTime;
+        console.log("Audio currentTime after seek:", audioRef.current.currentTime);
+      } else {
+        console.error("❌ No player available for seeking");
+        console.log("Player debug:", {
+          lessonType: targetLesson.type,
+          hasPlayerRef: !!playerRef,
+          hasAudioRef: !!audioRef.current,
+          playerRefReady: playerRef?.readyState,
+          audioRefReady: audioRef.current?.readyState
+        });
+      }
+      
+      // Highlight subtitle
+      console.log("🎯 Setting current subtitle:", savedSubtitle.subtitleId);
+      setCurrentSubtitle(savedSubtitle.subtitleId);
+      virtuosoRef.current.scrollToIndex({
+            index: savedSubtitle.subtitleId,
+            align: "center",
+            behavior: "smooth",
+      });
+      // Auto scroll to subtitle
+      console.log("📜 Attempting to scroll to subtitle...");
+      console.log("Virtuoso ref:", !!virtuosoRef.current);
+      console.log("Current subtitles length:", currentSubtitles.length);
+      
+      if (virtuosoRef.current && currentSubtitles.length > 0) {
+        const subtitleIndex = currentSubtitles.findIndex(
+          sub => sub.id === savedSubtitle.subtitleId
+        );
+        console.log("📜 Subtitle scroll - Index found:", subtitleIndex);
+        console.log("Looking for subtitle ID:", savedSubtitle.subtitleId);
+        console.log("Available subtitle IDs (first 5):", currentSubtitles.slice(0, 5).map(s => s.id));
+        
+        if (subtitleIndex !== -1) {
+          console.log("📜 Scrolling to subtitle index:", subtitleIndex);
+          virtuosoRef.current.scrollToIndex({
+            index: subtitleIndex,
+            align: "center",
+            behavior: "smooth",
+          });
+        } else {
+          console.warn("⚠️ Subtitle not found in current subtitles");
+        }
+      } else {
+        console.warn("⚠️ Cannot scroll - virtuoso or subtitles not ready");
+      }
+      
+      console.log("=== PLAY SAVED SUBTITLE END ===");
+    }, 1000);
+  };
+
+  // Debug useEffects để track state changes
+  useEffect(() => {
+    console.log("🔄 selectedCourse changed:", selectedCourse?.title || "null");
+  }, [selectedCourse]);
+
+  useEffect(() => {
+    console.log("🔄 activeChapter changed:", activeChapter?.title || "null");
+  }, [activeChapter]);
+
+  useEffect(() => {
+    console.log("🔄 currentLesson changed:", currentLesson?.title || "null");
+  }, [currentLesson]);
+
+  useEffect(() => {
+    console.log("🔄 currentSubtitles changed, length:", currentSubtitles.length);
+    if (currentSubtitles.length > 0) {
+      console.log("First 3 subtitle IDs:", currentSubtitles.slice(0, 3).map(s => s.id));
+    }
+  }, [currentSubtitles]);
+
+  useEffect(() => {
+    console.log("🔄 currentSubtitle changed:", currentSubtitle);
+  }, [currentSubtitle]);
 
   return (
     <div className="flex flex-col h-screen bg-black text-white">
@@ -750,11 +957,18 @@ export const Study = observer(() => {
                           </div>
                           {/* Save Icon - chỉ hiện khi hover */}
                           <button
-                            className="absolute top-3 right-3 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 rounded hover:bg-gray-600"
+                            className={`absolute top-3 right-3  transition-all duration-200 p-1 rounded hover:bg-gray-600
+                              ${
+                                selectedCourse && activeChapter && currentLesson && 
+                                savedSubtitlesStore.isSubtitleSaved(subtitle.id, currentLesson.id, selectedCourse.id)
+                                  ? "text-yellow-400 opacity-100" // Đã lưu - hiện luôn
+                                  : "text-gray-400 hover:text-white opacity-0 group-hover:opacity-100" // Chưa lưu - chỉ hiện khi hover
+                              }`}
                             onClick={(e) => {
                               e.stopPropagation(); // Ngăn click event lan ra subtitle div
                               console.log("Save subtitle:", subtitle.text);
                               // TODO: Implement save functionality
+                              handleSaveSubtitle(subtitle);
                             }}
                             title="Save this subtitle"
                           >

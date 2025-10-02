@@ -24,15 +24,25 @@ interface Course {
 }
 class FavoriteStore {
 
+  private _courses: Course[] = [];
   private _selectedCourse: Course | null = null;
   private _activeChapter: Chapter | null = null;
   private _currentLesson: Lesson | null = null;
   
   // Callback function sẽ được set từ Study component
   onLessonSelect: ((lesson: Lesson, autoPlay?: boolean) => void) | null = null;
+  // Callback cho play saved subtitle
+  onPlaySavedSubtitle: ((savedSubtitle: any) => void) | null = null;
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  get courses() {
+    return this._courses;
+  }
+  setCourses = (courses: Course[]) => {
+    this._courses = courses;
   }
 
   get selectedCourse() {
@@ -118,6 +128,23 @@ class FavoriteStore {
     };
 
   //setCurrentSubtitles([]);
+
+  setPlaySavedSubtitleHandler = (handler: (savedSubtitle: any) => void) => {
+    this.onPlaySavedSubtitle = handler;
+  };
+
+  // Method để play saved subtitle
+  playSavedSubtitle = (savedSubtitle: any) => {
+    console.log("🏪 FavoriteStore - playSavedSubtitle called with:", savedSubtitle);
+    console.log("🏪 onPlaySavedSubtitle callback exists:", !!this.onPlaySavedSubtitle);
+    
+    if (this.onPlaySavedSubtitle) {
+      console.log("🏪 Calling onPlaySavedSubtitle callback...");
+      this.onPlaySavedSubtitle(savedSubtitle);
+    } else {
+      console.error("🏪 ❌ No onPlaySavedSubtitle callback registered!");
+    }
+  };
 }
 
 export const favoriteStore = new FavoriteStore();
