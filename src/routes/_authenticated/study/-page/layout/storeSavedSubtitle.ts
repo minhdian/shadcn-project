@@ -84,6 +84,17 @@ class SavedSubtitlesStore {
     );
   };
 
+  handleSortFavorite = (currentIndex: number, newIndex: number) => {
+    if (newIndex < 0 || newIndex >= this._savedSubtitles.length) {
+      console.error("New index is out of bounds");
+      return;
+    }
+    const updatedSubtitles = [...this._savedSubtitles];
+    const [movedSubtitle] = updatedSubtitles.splice(currentIndex, 1);
+    updatedSubtitles.splice(newIndex, 0, movedSubtitle);
+    this._savedSubtitles = updatedSubtitles;
+  }
+
 } 
 
 export const savedSubtitlesStore = new SavedSubtitlesStore();

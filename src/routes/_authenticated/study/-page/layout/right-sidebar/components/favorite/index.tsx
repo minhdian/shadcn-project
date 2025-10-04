@@ -1,9 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { layoutStore } from "../../../store";
-import { BookOpen, Clock, Play, Trash2 } from "lucide-react";
+import { ArrowUpDown, BookOpen, Clock, Play, Trash2 } from "lucide-react";
 import mockCourseData from "../../../../mock-course.json";
 import { favoriteStore } from "../../../storeFavorite";
 import { savedSubtitlesStore } from "../../../storeSavedSubtitle";
+import { useState } from "react";
 
 interface Course {
   id: number;
@@ -30,8 +31,11 @@ export const Favorite = observer(() => {
 
  const { isShowFavorite } = layoutStore;
  const { selectedCourse, setSelectedCourse, playSavedSubtitle } = favoriteStore;
- const { savedSubtitles, removeSavedSubtitle, clearAllSaved } = savedSubtitlesStore;
+ const { savedSubtitles, removeSavedSubtitle, clearAllSaved, handleSortFavorite } = savedSubtitlesStore;
 
+  const [showSortModal, setShowSortModal] = useState(false);
+  const [selectedSubtitleIndex, setSelectedSubtitleIndex] = useState(0);
+  const [newPosition, setNewPosition] = useState("");
   // Convert mock data to proper types
   const courses: Course[] = mockCourseData.courses.map((course) => ({
     ...course,
@@ -62,6 +66,18 @@ export const Favorite = observer(() => {
   };
   const formatTime = (timeString: string) => {
     return timeString.replace(',', '.');
+  };
+  const handleShowSortModal = (subtitleIndex: number) => {
+    setSelectedSubtitleIndex(subtitleIndex);
+    setNewPosition("");
+    setShowSortModal(true);
+  };
+  
+  const handleConfirmSort = () => {
+    handleSortFavorite(selectedSubtitleIndex, Number(newPosition) - 1);
+    // TODO: Implement sort functionality
+    // console.log(`Moving subtitle from position ${selectedSubtitleIndex + 1} to position ${newPosition}`);
+    setShowSortModal(false);
   };
   return <>
     
@@ -95,7 +111,7 @@ export const Favorite = observer(() => {
                   <p className="text-gray-400 text-xs">Click save icon on subtitles to add them here</p>
                 </div>
               ) : (
-                savedSubtitles.map((savedSubtitle) => (
+                savedSubtitles.map((savedSubtitle, index) => (
                   <div
                     key={savedSubtitle.id}
                     className="bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-all group"
@@ -103,20 +119,36 @@ export const Favorite = observer(() => {
                     {/* Course & Lesson Info */}
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1 min-w-0">
-                        <h5 className="text-xs font-medium text-blue-600 truncate">
-                          {savedSubtitle.courseTitle}
-                        </h5>
+                        
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                            #{index + 1}
+                          </span>
+                          <h5 className="text-xs font-medium text-blue-600 truncate">
+                            {savedSubtitle.courseTitle}
+                          </h5>
+                        </div>
                         <h6 className="text-xs text-gray-600 truncate">
                           {savedSubtitle.chapterTitle} • {savedSubtitle.lessonTitle}
                         </h6>
                       </div>
-                      <button
-                        onClick={() => removeSavedSubtitle(savedSubtitle.id)}
-                        className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
-                        title="Remove saved subtitle"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleShowSortModal(index)}
+                          className="text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-all p-1"
+                          title="Change position"
+                        >
+                          <ArrowUpDown className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => removeSavedSubtitle(savedSubtitle.id)}
+                          className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
+                          title="Remove saved subtitle"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                      
                     </div>
 
                     {/* Subtitle Content */}
@@ -191,5 +223,63 @@ export const Favorite = observer(() => {
           </div>
         </section>
               )}
+
+        {/* Sort Modal */}
+    {showSortModal && (
+      <div 
+      onClick={() => setShowSortModal(false)}
+      className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+        <div 
+        className="bg-white rounded-lg p-6 w-80 mx-4"
+        onClick={(e) => e.stopPropagation()}
+        >
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Change Subtitle Position
+          </h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Vị trí hiện tại
+              </label>
+              <div className="text-lg font-bold text-blue-600">
+                #{selectedSubtitleIndex + 1}
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Di chuyển đến vị trí
+              </label>
+              <input
+                type="number"
+                min="1"
+                max={savedSubtitles.length}
+                value={newPosition}
+                onChange={(e) => setNewPosition(e.target.value)}
+                className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={`Enter 1-${savedSubtitles.length}`}
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              onClick={() => setShowSortModal(false)}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmSort}
+              disabled={!newPosition || Number(newPosition) < 1 || Number(newPosition) > savedSubtitles.length}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   </>;
 })

@@ -201,7 +201,6 @@ export const Study = observer(() => {
   // Hàm theo dõi subtitle dựa trên thời gian hiện tại
   const updateCurrentSubtitle = (
     currentTime: number,
-    prioritySubtitleId?: number
   ) => {
     // console.log(
     //   "Updating subtitle for time:",currentTime,
@@ -216,50 +215,51 @@ export const Study = observer(() => {
       return;
     }
 
-    // Tìm tất cả subtitle phù hợp với thời gian hiện tại
-    const matchingSubtitles = subtitles.filter((sub) => {
-      const startTime = timeToSeconds(sub.start);
-      const endTime = timeToSeconds(sub.end);
-      return currentTime >= startTime && currentTime <= endTime;
-    });
-
+    // Tìm subtitle hiện tại dựa trên logic: từ sub.start cho đến sub.start tiếp theo
     let current = null;
-
-    if (matchingSubtitles.length > 0) {
-      if (prioritySubtitleId) {
-        // Nếu có priority subtitle và nó trong danh sách phù hợp, chọn nó
-        current =
-          matchingSubtitles.find((sub) => sub.id === prioritySubtitleId) ||
-          matchingSubtitles[0];
-      } else {
-        // Không có priority, chọn subtitle đầu tiên trong danh sách
-        current = matchingSubtitles[0];
+    
+    for (let i = 0; i < subtitles.length; i++) {
+      const subtitle = subtitles[i];
+      const startTime = timeToSeconds(subtitle.start);
+      
+      // Lấy thời gian bắt đầu của subtitle tiếp theo (nếu có)
+      const nextSubtitle = subtitles[i + 1];
+      const nextStartTime = nextSubtitle ? timeToSeconds(nextSubtitle.start) : Infinity;
+      
+      // Kiểm tra xem currentTime có nằm trong khoảng [startTime, nextStartTime)
+      if (currentTime >= startTime && currentTime < nextStartTime) {
+        current = subtitle;
+        break;
       }
     }
 
-    if (current && current.id !== currentSubtitle) {
-      console.log("Setting current subtitle:", current.id, current.text);
-      setCurrentSubtitle(current.id);
+    // Set subtitle hiện tại
+    if (current) {
+      if (current.id !== currentSubtitle) {
+        console.log("Setting current subtitle:", current.id, current.text);
+        setCurrentSubtitle(current.id);
 
-      // Auto scroll to current subtitle when Focus mode is enabled
-      if (isFocusMode && virtuosoRef.current && currentSubtitles.length > 0) {
-        const currentIndex = currentSubtitles.findIndex(
-          (sub) => sub.id === current.id
-        );
-        if (currentIndex !== -1) {
-          console.log("Auto-scrolling to subtitle index:", currentIndex);
-          virtuosoRef.current.scrollToIndex({
-            index: currentIndex,
-            align: "center",
-            behavior: "smooth",
-          });
+        // Auto scroll to current subtitle when Focus mode is enabled
+        if (isFocusMode && virtuosoRef.current && currentSubtitles.length > 0) {
+          const currentIndex = currentSubtitles.findIndex(
+            (sub) => sub.id === current.id
+          );
+          if (currentIndex !== -1) {
+            console.log("Auto-scrolling to subtitle index:", currentIndex);
+            virtuosoRef.current.scrollToIndex({
+              index: currentIndex,
+              align: "center",
+              behavior: "smooth",
+            });
+          }
         }
       }
-    } else if (!current && currentSubtitle && !manualSubtitleTime) {
-      // Chỉ xóa highlight khi không có subtitle nào đang phát và không phải manual selection
-      if (playerControls.isRepeating) return;
-      console.log("Clearing current subtitle");
-      setCurrentSubtitle(null);
+    } else {
+      // Chỉ clear highlight khi không có subtitle nào phù hợp
+      if (currentSubtitle !== null && !playerControls.isRepeating) {
+        console.log("Clearing current subtitle");
+        setCurrentSubtitle(null);
+      }
     }
   };
 
@@ -327,12 +327,27 @@ export const Study = observer(() => {
           (playerRef?.currentTime ?? 0) + 0.01 ||
           audioRef.current?.currentTime ||
           0;
-        const current = subtitles.find((sub) => {
-          const startTime = timeToSeconds(sub.start);
-          const endTime = timeToSeconds(sub.end);
-          return currentTime >= startTime && currentTime <= endTime;
-        });
-
+        // const current = subtitles.find((sub) => {
+        //   const startTime = timeToSeconds(sub.start);
+        //   const endTime = timeToSeconds(sub.end);
+        //   return currentTime >= startTime && currentTime <= endTime;
+        // });
+        let current = null;
+        
+        for (let i = 0; i < subtitles.length; i++) {
+          const subtitle = subtitles[i];
+          const startTime = timeToSeconds(subtitle.start);
+          
+          // Lấy thời gian bắt đầu của subtitle tiếp theo (nếu có)
+          const nextSubtitle = subtitles[i + 1];
+          const nextStartTime = nextSubtitle ? timeToSeconds(nextSubtitle.start) : Infinity;
+          
+          // Kiểm tra xem currentTime có nằm trong khoảng [startTime, nextStartTime)
+          if (currentTime >= startTime && currentTime < nextStartTime) {
+            current = subtitle;
+            break;
+          }
+        }
         if (current) {
           setRepeatSubtitle(current);
           setCurrentSubtitle(current.id);
