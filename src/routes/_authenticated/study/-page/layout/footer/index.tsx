@@ -1,16 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { layoutStore } from "../store";
 import { Pause, Play, Repeat, RotateCcw, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
-import { IPlayerControls, playerStore } from "../storePlayer";
+import { playerStore } from "../storePlayer";
 import { useRef, useState } from "react";
 
 import { favoriteStore } from "../storeFavorite";
-import { set } from "zod";
 
 
 export const Footer = observer(() => {
-  const { isShowControl, toggleControl, isShowFavorite, toggleFavorite } = layoutStore;
-  const { selectedCourse,activeChapter, currentLesson, getPreviousLesson, getNextLesson, handleSkipBack, handleSkipForward } = favoriteStore;
+  const { isShowControl } = layoutStore;
+  const { selectedCourse, currentLesson, getPreviousLesson, getNextLesson, handleSkipBack, handleSkipForward } = favoriteStore;
   const { setPLayerControls, rewind, playerControls, setPlayerCurrentTime, setAudioCurrentTime,
     PlayerDuration, AudioDuration
   } = playerStore;

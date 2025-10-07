@@ -14,7 +14,7 @@
               "id": 1,
               "title": "Saying Hello and Goodbye",
               "type": "video",
-              "url": "https://www.youtube.com/watch?v=o3K_HbpWNpg",
+              "url": "http://wordpress-media-api.test/wp-content/uploads/filester/courses/sample-5s.mp4",
               "subtitle": "https://example.com/subtitles/hello-goodbye.vtt"
             },
             {

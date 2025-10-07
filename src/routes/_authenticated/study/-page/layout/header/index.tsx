@@ -2,59 +2,59 @@ import { Bell, BookOpen, Command, Search, Settings, User } from "lucide-react";
 import { layoutStore } from "../store"; 
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import mockCourseData from "../../mock-course.json";
+import { useCourseData, type Course } from "../../../../../../hooks/useCourseData";
 import { favoriteStore } from "../storeFavorite";
+import { PWAInstallButton } from '../../../../../../components/PWAInstallButton'
 
-interface Course {
-  id: number;
-  title: string;
-  image: string;
-  description: string;
-  chapters: Chapter[];
-}
-// Type definitions
-interface Lesson {
-  id: number;
-  title: string;
-  type: "video" | "audio";
-  url: string;
-  subtitle: string;
-}
-
-interface Chapter {
-  id: number;
-  title: string;
-  lessons: Lesson[];
-}
 export const HeaderStudy = observer(() => {
     const { isShowControl, toggleControl, isShowFavorite, toggleFavorite } = layoutStore;
-     const { selectedCourse, setSelectedCourse, setCourses } = favoriteStore;
+    const { setSelectedCourse, setCourses } = favoriteStore;
     const [isCommandOpen, setIsCommandOpen] = useState(false);
+    const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
 
-  // Convert mock data to proper types
-  const courses: Course[] = mockCourseData.courses.map((course) => ({
-    ...course,
-    chapters: course.chapters.map((chapter) => ({
-      ...chapter,
-      lessons: chapter.lessons.map((lesson) => ({
-        ...lesson,
-        type: lesson.type as "video" | "audio",
-      })),
-    })),
-  }));
-  useEffect(() => {
-    setCourses(courses);
-  }, [setCourses]);
+    // Use API instead of mock data
+    const { courseData } = useCourseData();
+
+    useEffect(() => {
+        if (courseData.courses.length > 0) {
+            // Convert API data to match store interface by ensuring subtitle is always string
+            const coursesWithStringSubtitles = courseData.courses.map(course => ({
+                ...course,
+                chapters: course.chapters.map(chapter => ({
+                    ...chapter,
+                    lessons: chapter.lessons.map(lesson => ({
+                        ...lesson,
+                        subtitle: lesson.subtitle || "", // Ensure subtitle is always string
+                        type: lesson.type as "video" | "audio"
+                    }))
+                }))
+            }));
+            setCourses(coursesWithStringSubtitles);
+        }
+    }, [courseData.courses, setCourses]);
 
   // Handle click outside dialog
   const handleOverlayClick = (e: React.MouseEvent) => {
       if (e.target === e.currentTarget) {
           setIsCommandOpen(false);
+          setIsFileManagerOpen(false);
       }
   };
   
   const handleCourseSelect = (course: Course) => {
-    setSelectedCourse(course);
+    // Convert course to match store interface
+    const courseWithStringSubtitles = {
+        ...course,
+        chapters: course.chapters.map(chapter => ({
+            ...chapter,
+            lessons: chapter.lessons.map(lesson => ({
+                ...lesson,
+                subtitle: lesson.subtitle || "", // Ensure subtitle is always string
+                type: lesson.type as "video" | "audio"
+            }))
+        }))
+    };
+    setSelectedCourse(courseWithStringSubtitles);
   };
 
   return (
@@ -88,6 +88,14 @@ export const HeaderStudy = observer(() => {
           {/* Right Side */}
           <div className="flex items-center space-x-2 lg:space-x-4">
             {/* Command Palette Button */}
+            <PWAInstallButton />
+            <button 
+                onClick={() => setIsFileManagerOpen(true)}
+                className="text-gray-400 hover:text-white transition-colors"
+                title="Open command palette"
+            >
+                <Command className="w-4 h-4 lg:w-5 lg:h-5" />
+            </button>
             <button 
                 onClick={() => setIsCommandOpen(true)}
                 className="text-gray-400 hover:text-white transition-colors"
@@ -142,6 +150,7 @@ export const HeaderStudy = observer(() => {
                 <div 
                 onClick={handleOverlayClick}
                 className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+                  
                     <div className="bg-popover rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden">
                         {/* Header */}
                         <div className="border-b border-slate-700 p-4">
@@ -169,7 +178,7 @@ export const HeaderStudy = observer(() => {
                                 <div className="px-2 py-1 text-xs text-slate-400 font-medium uppercase tracking-wide">
                                     General
                                 </div>
-                                {courses.map((item, index) => (
+                                {courseData.courses.map((item, index) => (
                                     <button
                                         key={index}
                                         className="w-full flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-slate-700 transition-colors text-left group"
@@ -193,7 +202,28 @@ export const HeaderStudy = observer(() => {
                         </div>
                     </div>
                 </div>
+                
             )}
+
+            {isFileManagerOpen && (
+                <div 
+                onClick={handleOverlayClick}
+                className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+                    <div className="bg-popover rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+                        <div className="p-4 text-center">
+                            <p>File Manager Component</p>
+                            <button 
+                                onClick={() => setIsFileManagerOpen(false)}
+                                className="mt-2 px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+            )}
+                
     </>
   )
   

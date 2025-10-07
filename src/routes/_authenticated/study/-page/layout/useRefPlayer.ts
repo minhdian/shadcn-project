@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { playerStore } from "./storePlayer";
 
 export const usePlayerRef = () => {

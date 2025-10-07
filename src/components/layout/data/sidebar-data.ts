@@ -21,7 +21,6 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
-  Book,
   BookOpen,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'

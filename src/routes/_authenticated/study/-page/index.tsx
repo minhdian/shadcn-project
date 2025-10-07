@@ -1,16 +1,13 @@
 import {
-  Bell,
   BookOpen,
   List,
-  Menu,
   Mic,
   Pause,
   Play,
   Plus,
-  User,
   Video,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Virtuoso } from "react-virtuoso";
 import { subtitles } from "./mock-sub";
@@ -21,20 +18,18 @@ import { observer } from "mobx-react-lite";
 import { favoriteStore } from "./layout/storeFavorite";
 import { Footer } from "./layout/footer";
 import { playerStore, usePlayerStore } from "./layout/storePlayer";
-import { usePlayerRef } from "./layout/useRefPlayer";
 import { layoutStore } from "./layout/store";
 import { savedSubtitlesStore } from "./layout/storeSavedSubtitle";
-import { ac } from "node_modules/@faker-js/faker/dist/airline-CLphikKp";
 import { toJS } from "mobx";
 
 
-interface Course {
-  id: number;
-  title: string;
-  image: string;
-  description: string;
-  chapters: Chapter[];
-}
+// interface Course {
+//   id: number;
+//   title: string;
+//   image: string;
+//   description: string;
+//   chapters: Chapter[];
+// }
 // Type definitions
 interface Lesson {
   id: number;
@@ -48,6 +43,13 @@ interface Chapter {
   id: number;
   title: string;
   lessons: Lesson[];
+}
+// Define the file item type
+interface FileItem {
+  type: 'file' | 'folder';
+  name: string;
+  url?: string; // chỉ có nếu type === 'file'
+  children?: FileItem[]; // chỉ có nếu type === 'folder'
 }
 
 export const Study = observer(() => {
@@ -64,7 +66,7 @@ export const Study = observer(() => {
     getNextLesson, 
     setPlaySavedSubtitleHandler,
     setSelectedCourse,
-    courses,
+    // courses,
    } = favoriteStore;
   const {    
     setAudioRef,
@@ -111,6 +113,63 @@ export const Study = observer(() => {
   const { playerRef, handlePlayerRef } = usePlayerStore();
 
   // Event handlers
+  const [files, setFiles] = useState<FileItem[]>([]);
+
+  useEffect(() => {
+    fetch('https://wordpress-media-api.test/wp-json/media-api/v1/files')
+      .then(res => res.json())
+      .then(data => {
+        console.log("📡 API Response:", data);
+        
+        // Kiểm tra xem data có phải là array không
+        if (Array.isArray(data)) {
+          setFiles(data);
+        } else if (data && data.children && Array.isArray(data.children)) {
+          // Nếu data là object có children
+          setFiles(data.children);
+        } else {
+          console.warn("⚠️ API response is not an array:", data);
+          setFiles([]);
+        }
+      })
+      .catch(err => {
+        console.error("❌ Error fetching files:", err);
+        setFiles([]);
+      });
+
+      console.log("📁 Media files:", files);
+  }, []);
+
+  // ✅ Hàm hiển thị đệ quy
+  const renderTree = (items: FileItem[], depth = 0) => {
+    // Kiểm tra items có phải là array không
+    if (!Array.isArray(items)) {
+      console.warn("⚠️ renderTree: items is not an array:", items);
+      return null;
+    }
+    
+    return (
+      <ul style={{ marginLeft: depth * 16 }}>
+        {items.map((item) => (
+        <li key={item.name}>
+          {item.type === "folder" ? (
+            <>
+              📁 <strong>{item.name}</strong>
+              {item.children && Array.isArray(item.children) && renderTree(item.children, depth + 1)}
+            </>
+          ) : (
+            <>
+              📄{" "}
+              <a href={item.url} target="_blank" rel="noreferrer">
+                {item.name}
+              </a>
+            </>
+          )}
+        </li>
+        ))}
+      </ul>
+    );
+  };
 
   useEffect(() => {
     // Set refs trong store khi component mount
@@ -678,7 +737,7 @@ export const Study = observer(() => {
                               src={currentLesson.url}
                               width="100%"
                               height="100%"
-                              controls={true}
+                              controls={false}
                               playing={playerControls.isPlaying}
                               volume={playerControls.volume}
                               muted={playerControls.muted}
@@ -854,7 +913,7 @@ export const Study = observer(() => {
                   </div>
                 ) : (
                   // Default Course Selection State
-                  <div className="flex items-center justify-center h-full">
+                  <div className="flex-col items-center justify-center h-full">
                     <div className="text-center">
                       <BookOpen className="w-16 h-16 text-gray-500 mx-auto mb-4" />
                       <h3 className="text-gray-400 text-lg font-medium">
@@ -864,7 +923,13 @@ export const Study = observer(() => {
                         Choose a course from the right panel to start learning
                       </p>
                     </div>
+
+                    <h2>📂 Danh sách file từ WordPress</h2>
+                    {renderTree(files)}
+
                   </div>
+                  
+                  
                 )}
               </section>
 
@@ -1014,6 +1079,7 @@ export const Study = observer(() => {
                       </div>
                     </div>
                   </div>
+                  
                 )}
               </section>
 

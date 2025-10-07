@@ -17,6 +17,8 @@ import { ThemeProvider } from './context/theme-provider'
 import { routeTree } from './routeTree.gen'
 // Styles
 import './styles/index.css'
+import { registerSW } from './utils/serviceWorker';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -101,4 +103,8 @@ if (!rootElement.innerHTML) {
       </QueryClientProvider>
     </StrictMode>
   )
+}
+
+if ('serviceWorker' in navigator) {
+  registerSW();
 }

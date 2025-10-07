@@ -1,8 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import {Study} from './-page'
-
+import { Study } from './-page'
+import { CourseProvider } from '../../../contexts/CourseContext'
 
 export const Route = createFileRoute('/_authenticated/study/')({
-  component: Study,
+  component: () => (
+    <CourseProvider>
+      <Study />
+    </CourseProvider>
+  ),
 })
 

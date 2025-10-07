@@ -1,56 +1,21 @@
 import { observer } from "mobx-react-lite";
 import { layoutStore } from "../../../store";
 import { ArrowUpDown, BookOpen, Clock, Play, Trash2 } from "lucide-react";
-import mockCourseData from "../../../../mock-course.json";
 import { favoriteStore } from "../../../storeFavorite";
 import { savedSubtitlesStore } from "../../../storeSavedSubtitle";
 import { useState } from "react";
 
-interface Course {
-  id: number;
-  title: string;
-  image: string;
-  description: string;
-  chapters: Chapter[];
-}
-// Type definitions
-interface Lesson {
-  id: number;
-  title: string;
-  type: "video" | "audio";
-  url: string;
-  subtitle: string;
-}
-
-interface Chapter {
-  id: number;
-  title: string;
-  lessons: Lesson[];
-}
 export const Favorite = observer(() => {
-
  const { isShowFavorite } = layoutStore;
- const { selectedCourse, setSelectedCourse, playSavedSubtitle } = favoriteStore;
+ const {  playSavedSubtitle } = favoriteStore;
  const { savedSubtitles, removeSavedSubtitle, clearAllSaved, handleSortFavorite } = savedSubtitlesStore;
+ 
+ // Use API instead of mock data
+//  const { courseData, loading, error } = useCourseData();
 
   const [showSortModal, setShowSortModal] = useState(false);
   const [selectedSubtitleIndex, setSelectedSubtitleIndex] = useState(0);
   const [newPosition, setNewPosition] = useState("");
-  // Convert mock data to proper types
-  const courses: Course[] = mockCourseData.courses.map((course) => ({
-    ...course,
-    chapters: course.chapters.map((chapter) => ({
-      ...chapter,
-      lessons: chapter.lessons.map((lesson) => ({
-        ...lesson,
-        type: lesson.type as "video" | "audio",
-      })),
-    })),
-  }));
-
-  const handleCourseSelect = (course: Course) => {
-    setSelectedCourse(course);
-  };
 
   const handlePlaySavedSubtitle = (savedSubtitle: any) => {
     console.log("🎯 Favorite component - Play clicked:", {
@@ -101,6 +66,10 @@ export const Favorite = observer(() => {
                 </button>
               )}
             </div>
+            {/* File Manager Component */}
+          <div className="mb-6">
+            
+          </div>
 
             {/* Saved Subtitles List */}
             <div className="space-y-3 mb-6">

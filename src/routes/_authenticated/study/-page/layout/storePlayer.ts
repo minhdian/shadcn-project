@@ -1,6 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { createContext, useCallback, useContext } from "react";
-import ReactPlayer from "react-player";
+import {  useCallback } from "react";
 
 export interface IPlayerControls {
     isPlaying: boolean;
