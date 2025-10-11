@@ -3,47 +3,22 @@ import { layoutStore } from "../../../store";
 import { ArrowUpDown, BookOpen, Clock, Play, Trash2 } from "lucide-react";
 import { favoriteStore } from "../../../storeFavorite";
 import { savedSubtitlesStore } from "../../../storeSavedSubtitle";
-import { useState } from "react";
+import { formatTime } from "./util";
+import { useSortAction } from "./hooks/useSortAction";
 
 export const Favorite = observer(() => {
  const { isShowFavorite } = layoutStore;
- const {  playSavedSubtitle } = favoriteStore;
- const { savedSubtitles, removeSavedSubtitle, clearAllSaved, handleSortFavorite } = savedSubtitlesStore;
- 
- // Use API instead of mock data
-//  const { courseData, loading, error } = useCourseData();
+ const { savedSubtitles, removeSavedSubtitle, clearAllSaved, handlePlaySavedSubtitle } = savedSubtitlesStore;
 
-  const [showSortModal, setShowSortModal] = useState(false);
-  const [selectedSubtitleIndex, setSelectedSubtitleIndex] = useState(0);
-  const [newPosition, setNewPosition] = useState("");
-
-  const handlePlaySavedSubtitle = (savedSubtitle: any) => {
-    console.log("🎯 Favorite component - Play clicked:", {
-      subtitleId: savedSubtitle.subtitleId,
-      subtitleText: savedSubtitle.subtitleText,
-      courseId: savedSubtitle.courseId,
-      chapterId: savedSubtitle.chapterId,
-      lessonId: savedSubtitle.lessonId
-    });
-    
-    console.log("🎯 Calling playSavedSubtitle function...");
-    playSavedSubtitle(savedSubtitle);
-  };
-  const formatTime = (timeString: string) => {
-    return timeString.replace(',', '.');
-  };
-  const handleShowSortModal = (subtitleIndex: number) => {
-    setSelectedSubtitleIndex(subtitleIndex);
-    setNewPosition("");
-    setShowSortModal(true);
-  };
-  
-  const handleConfirmSort = () => {
-    handleSortFavorite(selectedSubtitleIndex, Number(newPosition) - 1);
-    // TODO: Implement sort functionality
-    // console.log(`Moving subtitle from position ${selectedSubtitleIndex + 1} to position ${newPosition}`);
-    setShowSortModal(false);
-  };
+  const {
+    showSortModal,
+    setShowSortModal,
+    selectedSubtitleIndex,
+    newPosition,
+    setNewPosition,
+    handleShowSortModal,
+    handleConfirmSort
+  } = useSortAction();
   return <>
     
     {isShowFavorite && (
@@ -66,10 +41,6 @@ export const Favorite = observer(() => {
                 </button>
               )}
             </div>
-            {/* File Manager Component */}
-          <div className="mb-6">
-            
-          </div>
 
             {/* Saved Subtitles List */}
             <div className="space-y-3 mb-6">
@@ -146,49 +117,7 @@ export const Favorite = observer(() => {
                   </div>
                 ))
               )}
-            </div>
-
-            {/* Available Courses Section */}
-            {/* <div className="border-t border-gray-300 pt-4">
-              <h3 className="text-gray-800 font-semibold mb-4 flex items-center">
-                <BookOpen className="w-5 h-5 mr-2" />
-                Available Courses
-              </h3>
-
-              <div className="space-y-3">
-                {courses.map((course) => (
-                  <div
-                    key={course.id}
-                    className={`bg-white rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
-                      selectedCourse?.id === course.id
-                        ? "ring-2 ring-green-500 shadow-lg"
-                        : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => handleCourseSelect(course)}
-                  >
-                    <div className="bg-gradient-to-br from-blue-500 to-purple-500 h-24 rounded-lg mb-3"></div>
-                    <h4 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-2">
-                      {course.title}
-                    </h4>
-                    <p className="text-gray-600 text-xs mb-2 line-clamp-2">
-                      {course.description}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">
-                        {course.chapters.length} chapters
-                      </span>
-                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
-                        {course.chapters.reduce(
-                          (total, chapter) => total + chapter.lessons.length,
-                          0
-                        )}{" "}
-                        lessons
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
+            </div> 
           </div>
         </section>
               )}

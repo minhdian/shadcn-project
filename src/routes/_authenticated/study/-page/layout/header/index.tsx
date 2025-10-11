@@ -10,7 +10,6 @@ export const HeaderStudy = observer(() => {
     const { isShowControl, toggleControl, isShowFavorite, toggleFavorite } = layoutStore;
     const { setSelectedCourse, setCourses } = favoriteStore;
     const [isCommandOpen, setIsCommandOpen] = useState(false);
-    const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
 
     // Use API instead of mock data
     const { courseData } = useCourseData();
@@ -37,7 +36,6 @@ export const HeaderStudy = observer(() => {
   const handleOverlayClick = (e: React.MouseEvent) => {
       if (e.target === e.currentTarget) {
           setIsCommandOpen(false);
-          setIsFileManagerOpen(false);
       }
   };
   
@@ -89,13 +87,6 @@ export const HeaderStudy = observer(() => {
           <div className="flex items-center space-x-2 lg:space-x-4">
             {/* Command Palette Button */}
             <PWAInstallButton />
-            <button 
-                onClick={() => setIsFileManagerOpen(true)}
-                className="text-gray-400 hover:text-white transition-colors"
-                title="Open command palette"
-            >
-                <Command className="w-4 h-4 lg:w-5 lg:h-5" />
-            </button>
             <button 
                 onClick={() => setIsCommandOpen(true)}
                 className="text-gray-400 hover:text-white transition-colors"
@@ -199,25 +190,6 @@ export const HeaderStudy = observer(() => {
                                     </button>
                                 ))}
                             </div>
-                        </div>
-                    </div>
-                </div>
-                
-            )}
-
-            {isFileManagerOpen && (
-                <div 
-                onClick={handleOverlayClick}
-                className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-                    <div className="bg-popover rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-                        <div className="p-4 text-center">
-                            <p>File Manager Component</p>
-                            <button 
-                                onClick={() => setIsFileManagerOpen(false)}
-                                className="mt-2 px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700"
-                            >
-                                Close
-                            </button>
                         </div>
                     </div>
                 </div>
