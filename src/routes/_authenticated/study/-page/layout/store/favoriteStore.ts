@@ -1,5 +1,7 @@
 import { makeAutoObservable } from 'mobx'
-import { playerStore } from './storePlayer'
+import { subtitles } from '../../mock-sub'
+import { playerStore } from './playerStore'
+import { savedSubtitlesStore } from './savedSubtitlesStore'
 
 interface Lesson {
   id: number
@@ -28,8 +30,6 @@ class FavoriteStore {
   private _activeChapter: Chapter | null = null
   private _currentLesson: Lesson | null = null
 
-  // Callback function sẽ được set từ Study component
-  onLessonSelect: ((lesson: Lesson, autoPlay?: boolean) => void) | null = null
   // Callback cho play saved subtitle
   onPlaySavedSubtitle: ((savedSubtitle: any) => void) | null = null
 
@@ -69,12 +69,6 @@ class FavoriteStore {
     this._currentLesson = lesson
   }
 
-  setLessonSelectHandler = (
-    handler: (lesson: Lesson, autoPlay?: boolean) => void
-  ) => {
-    this.onLessonSelect = handler
-  }
-
   //helper methods
   // Hàm lấy lesson trước đó trong chapter
   getPreviousLesson = () => {
@@ -110,9 +104,12 @@ class FavoriteStore {
   // Xử lý skip về lesson trước đó
   handleSkipBackClick = () => {
     const previousLesson = this.getPreviousLesson()
-    if (previousLesson && this.onLessonSelect) {
+    if (previousLesson) {
       console.log('Skipping to previous lesson:', previousLesson.title)
-      this.onLessonSelect(previousLesson, playerStore.playerControls.isPlaying) // Giữ nguyên trạng thái play/pause
+      this.handleLessonSelect(
+        previousLesson,
+        playerStore.playerControls.isPlaying
+      ) // Giữ nguyên trạng thái play/pause
     } else {
       console.log('No previous lesson available')
     }
@@ -120,9 +117,9 @@ class FavoriteStore {
   // Xử lý skip đến lesson tiếp theo
   handleSkipForwardClick = () => {
     const nextLesson = this.getNextLesson()
-    if (nextLesson && this.onLessonSelect) {
+    if (nextLesson) {
       console.log('Skipping to next lesson:', nextLesson.title)
-      this.onLessonSelect(nextLesson, playerStore.playerControls.isPlaying) // Giữ nguyên trạng thái play/pause
+      this.handleLessonSelect(nextLesson, playerStore.playerControls.isPlaying) // Giữ nguyên trạng thái play/pause
     } else {
       console.log('No next lesson available')
     }
@@ -135,9 +132,9 @@ class FavoriteStore {
   }
 
   // Method để play saved subtitle
-  playSavedSubtitle = (savedSubtitle: any) => {
+  handlePlaySavedSubtitle = (savedSubtitle: any) => {
     console.log(
-      '🏪 FavoriteStore - playSavedSubtitle called with:',
+      '🏪 FavoriteStore - handlePlaySavedSubtitle called with:',
       savedSubtitle
     )
     console.log(
@@ -151,6 +148,32 @@ class FavoriteStore {
     } else {
       console.error('🏪 ❌ No onPlaySavedSubtitle callback registered!')
     }
+  }
+
+  handleChapterSelect = (chapter: Chapter) => {
+    this.setActiveChapter(chapter)
+    this.setCurrentLesson(null)
+    savedSubtitlesStore.setCurrentSubtitles([])
+  }
+
+  // Hàm lấy lesson đầu tiên trong chapter
+  getFirstLessonInChapter = () => {
+    if (!this._activeChapter || this._activeChapter.lessons.length === 0)
+      return null
+    return this._activeChapter.lessons[0]
+  }
+
+  handleLessonSelect = (lesson: Lesson, autoPlay: boolean = false) => {
+    this.setCurrentLesson(lesson)
+    savedSubtitlesStore.setCurrentSubtitles(subtitles)
+    playerStore.setPLayerControls({
+      isPlaying: autoPlay,
+      played: 0,
+      playedSeconds: 0,
+      seeking: false,
+      duration: 0,
+    }) // Chỉ phát nếu autoPlay = true
+    // Reset thời gian và duration khi chuyển lesson
   }
 }
 

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { makeAutoObservable } from 'mobx'
-import { favoriteStore } from './storeFavorite'
+import { favoriteStore } from './favoriteStore'
 
 export interface IPlayerControls {
   isPlaying: boolean
@@ -19,6 +19,7 @@ class PlayerStore {
   // Player ref để điều khiển từ bên ngoài
   playerRef: HTMLVideoElement | null = null
   audioRef: React.RefObject<HTMLAudioElement> | null = null
+  virtuosoRef: any = null // Ref cho Virtuoso
 
   //player state
   private _playerControls: IPlayerControls = {
@@ -34,9 +35,9 @@ class PlayerStore {
     duration: 0,
     seeking: false,
   }
-
+  private _isTransitioning: boolean = false // Trạng thái chuyển đổi giữa các bài học
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this, { virtuosoRef: false })
   }
 
   // getters và setters cho player state
@@ -45,6 +46,17 @@ class PlayerStore {
   }
   setPLayerControls = (controls: Partial<IPlayerControls>) => {
     this._playerControls = { ...this._playerControls, ...controls }
+  }
+
+  get isTransitioning() {
+    return this._isTransitioning
+  }
+  setIsTransitioning = (value: boolean) => {
+    this._isTransitioning = value
+  }
+
+  togglePause = () => {
+    this.setPLayerControls({ isPlaying: false })
   }
 
   // Setters
@@ -129,6 +141,7 @@ class PlayerStore {
     } else {
       this.setPLayerControls({ muted: false })
     }
+    console.log('virtuosoRef', this.virtuosoRef)
   }
 
   handleMuteClick = () => {
@@ -196,6 +209,16 @@ class PlayerStore {
       return this.audioRef.current.duration
     }
   }
+
+  scrollToIndex = (index: number) => {
+    if (this.virtuosoRef) {
+      this.virtuosoRef.scrollToIndex({
+        index: index,
+        align: 'center',
+        behavior: 'smooth',
+      })
+    }
+  }
 }
 export const playerStore = new PlayerStore()
 // const playerStoreContext = createContext(playerStore);
@@ -207,5 +230,14 @@ export const usePlayerStore = () => {
       console.log('Player ref set:', ref)
     }
   }, [])
-  return { ...playerStore, handlePlayerRef }
+
+  // Nhận ref của Virtuoso
+  const handleVirtuosoRef = useCallback((ref: any) => {
+    if (ref) {
+      playerStore.virtuosoRef = ref
+      // console.log("🌀 Virtuoso ref set:", ref)
+    }
+  }, [])
+
+  return { ...playerStore, handlePlayerRef, handleVirtuosoRef }
 }

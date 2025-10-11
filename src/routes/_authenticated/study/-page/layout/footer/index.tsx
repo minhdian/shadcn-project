@@ -9,9 +9,9 @@ import {
   VolumeX,
 } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
-import { layoutStore } from '../store'
-import { favoriteStore } from '../storeFavorite'
-import { playerStore } from '../storePlayer'
+import { favoriteStore } from '../store/favoriteStore'
+import { layoutStore } from '../store/layoutStore'
+import { playerStore } from '../store/playerStore'
 import { hoverTimeStyle } from './config'
 import { VOLUME_SIZE } from './constant'
 import { useSeekbarAction } from './hooks/useSeekbarAction'
