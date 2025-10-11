@@ -1,7 +1,13 @@
 import { makeAutoObservable } from 'mobx'
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storeFavorite.ts
 import { playerStore } from './storePlayer'
 import { savedSubtitlesStore } from './storeSavedSubtitle'
 import { subtitles } from '../mock-sub'
+=======
+import { subtitles } from '../../mock-sub'
+import { playerStore } from './playerStore'
+import { savedSubtitlesStore } from './savedSubtitlesStore'
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/favoriteStore.ts
 
 interface Lesson {
   id: number
@@ -30,7 +36,10 @@ class FavoriteStore {
   private _activeChapter: Chapter | null = null
   private _currentLesson: Lesson | null = null
 
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storeFavorite.ts
 
+=======
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/favoriteStore.ts
   // Callback cho play saved subtitle
   onPlaySavedSubtitle: ((savedSubtitle: any) => void) | null = null
 
@@ -70,7 +79,10 @@ class FavoriteStore {
     this._currentLesson = lesson
   }
 
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storeFavorite.ts
 
+=======
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/favoriteStore.ts
   //helper methods
   // Hàm lấy lesson trước đó trong chapter
   getPreviousLesson = () => {
@@ -108,7 +120,14 @@ class FavoriteStore {
     const previousLesson = this.getPreviousLesson()
     if (previousLesson) {
       console.log('Skipping to previous lesson:', previousLesson.title)
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storeFavorite.ts
       this.handleLessonSelect(previousLesson, playerStore.playerControls.isPlaying) // Giữ nguyên trạng thái play/pause
+=======
+      this.handleLessonSelect(
+        previousLesson,
+        playerStore.playerControls.isPlaying
+      ) // Giữ nguyên trạng thái play/pause
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/favoriteStore.ts
     } else {
       console.log('No previous lesson available')
     }
@@ -150,6 +169,7 @@ class FavoriteStore {
   }
 
   handleChapterSelect = (chapter: Chapter) => {
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storeFavorite.ts
     this.setActiveChapter(chapter);
     this.setCurrentLesson(null);
     savedSubtitlesStore.setCurrentSubtitles([]);
@@ -167,6 +187,32 @@ class FavoriteStore {
       playerStore.setPLayerControls({ isPlaying: autoPlay , played: 0, playedSeconds: 0, seeking: false, duration: 0 }); // Chỉ phát nếu autoPlay = true
       // Reset thời gian và duration khi chuyển lesson
   };
+=======
+    this.setActiveChapter(chapter)
+    this.setCurrentLesson(null)
+    savedSubtitlesStore.setCurrentSubtitles([])
+  }
+
+  // Hàm lấy lesson đầu tiên trong chapter
+  getFirstLessonInChapter = () => {
+    if (!this._activeChapter || this._activeChapter.lessons.length === 0)
+      return null
+    return this._activeChapter.lessons[0]
+  }
+
+  handleLessonSelect = (lesson: Lesson, autoPlay: boolean = false) => {
+    this.setCurrentLesson(lesson)
+    savedSubtitlesStore.setCurrentSubtitles(subtitles)
+    playerStore.setPLayerControls({
+      isPlaying: autoPlay,
+      played: 0,
+      playedSeconds: 0,
+      seeking: false,
+      duration: 0,
+    }) // Chỉ phát nếu autoPlay = true
+    // Reset thời gian và duration khi chuyển lesson
+  }
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/favoriteStore.ts
 }
 
 export const favoriteStore = new FavoriteStore()

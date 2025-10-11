@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { playerStore } from '../../storePlayer'
+import { playerStore } from '../../store/playerStore'
 
 export const useSeekbarAction = () => {
   const [hoverTime, setHoverTime] = useState<number | null>(null)

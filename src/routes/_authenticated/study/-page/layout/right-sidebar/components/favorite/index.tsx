@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { observer } from "mobx-react-lite";
 import { layoutStore } from "../../../store";
 import { ArrowUpDown, BookOpen, Clock, Play, Trash2 } from "lucide-react";
@@ -9,6 +10,23 @@ import { useSortAction } from "./hooks/useSortAction";
 export const Favorite = observer(() => {
  const { isShowFavorite } = layoutStore;
  const { savedSubtitles, removeSavedSubtitle, clearAllSaved, handlePlaySavedSubtitle } = savedSubtitlesStore;
+=======
+import { ArrowUpDown, BookOpen, Clock, Play, Trash2 } from 'lucide-react'
+import { observer } from 'mobx-react-lite'
+import { layoutStore } from '../../../store/layoutStore'
+import { savedSubtitlesStore } from '../../../store/savedSubtitlesStore'
+import { useSortAction } from './hooks/useSortAction'
+import { formatTime } from './util'
+
+export const Favorite = observer(() => {
+  const { isShowFavorite } = layoutStore
+  const {
+    savedSubtitles,
+    removeSavedSubtitle,
+    clearAllSaved,
+    handlePlaySavedSubtitle,
+  } = savedSubtitlesStore
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d
 
   const {
     showSortModal,
@@ -17,6 +35,7 @@ export const Favorite = observer(() => {
     newPosition,
     setNewPosition,
     handleShowSortModal,
+<<<<<<< HEAD
     handleConfirmSort
   } = useSortAction();
   return <>
@@ -25,17 +44,26 @@ export const Favorite = observer(() => {
       
         <section className="hidden lg:block w-full lg:w-1/5 bg-gray-100 overflow-y-auto animate-in slide-in-from-right duration-300">
           <div className="p-4">
+=======
+    handleConfirmSort,
+  } = useSortAction()
+  return (
+    <>
+      {isShowFavorite && (
+        <section className='animate-in slide-in-from-right hidden w-full overflow-y-auto bg-gray-100 duration-300 lg:block lg:w-1/5'>
+          <div className='p-4'>
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-gray-800 font-semibold flex items-center">
-                <BookOpen className="w-5 h-5 mr-2" />
+            <div className='mb-4 flex items-center justify-between'>
+              <h3 className='flex items-center font-semibold text-gray-800'>
+                <BookOpen className='mr-2 h-5 w-5' />
                 Saved Subtitles
               </h3>
               {savedSubtitles.length > 0 && (
                 <button
                   onClick={clearAllSaved}
-                  className="text-red-500 hover:text-red-700 text-xs"
-                  title="Clear all saved subtitles"
+                  className='text-xs text-red-500 hover:text-red-700'
+                  title='Clear all saved subtitles'
                 >
                   Clear All
                 </button>
@@ -43,141 +71,155 @@ export const Favorite = observer(() => {
             </div>
 
             {/* Saved Subtitles List */}
-            <div className="space-y-3 mb-6">
+            <div className='mb-6 space-y-3'>
               {savedSubtitles.length === 0 ? (
-                <div className="text-center py-8">
-                  <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm">No saved subtitles yet</p>
-                  <p className="text-gray-400 text-xs">Click save icon on subtitles to add them here</p>
+                <div className='py-8 text-center'>
+                  <BookOpen className='mx-auto mb-3 h-12 w-12 text-gray-400' />
+                  <p className='text-sm text-gray-500'>
+                    No saved subtitles yet
+                  </p>
+                  <p className='text-xs text-gray-400'>
+                    Click save icon on subtitles to add them here
+                  </p>
                 </div>
               ) : (
                 savedSubtitles.map((savedSubtitle, index) => (
                   <div
                     key={savedSubtitle.id}
-                    className="bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-all group"
+                    className='group rounded-lg border border-gray-200 bg-white p-3 transition-all hover:shadow-md'
                   >
                     {/* Course & Lesson Info */}
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 min-w-0">
-                        
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                    <div className='mb-2 flex items-start justify-between'>
+                      <div className='min-w-0 flex-1'>
+                        <div className='flex items-center gap-2'>
+                          <span className='rounded bg-gray-200 px-2 py-1 text-xs font-bold text-gray-500'>
                             #{index + 1}
                           </span>
-                          <h5 className="text-xs font-medium text-blue-600 truncate">
+                          <h5 className='truncate text-xs font-medium text-blue-600'>
                             {savedSubtitle.courseTitle}
                           </h5>
                         </div>
-                        <h6 className="text-xs text-gray-600 truncate">
-                          {savedSubtitle.chapterTitle} • {savedSubtitle.lessonTitle}
+                        <h6 className='truncate text-xs text-gray-600'>
+                          {savedSubtitle.chapterTitle} •{' '}
+                          {savedSubtitle.lessonTitle}
                         </h6>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className='flex items-center gap-1'>
                         <button
                           onClick={() => handleShowSortModal(index)}
-                          className="text-gray-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-all p-1"
-                          title="Change position"
+                          className='p-1 text-gray-400 opacity-0 transition-all group-hover:opacity-100 hover:text-blue-500'
+                          title='Change position'
                         >
-                          <ArrowUpDown className="w-3 h-3" />
+                          <ArrowUpDown className='h-3 w-3' />
                         </button>
                         <button
                           onClick={() => removeSavedSubtitle(savedSubtitle.id)}
-                          className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
-                          title="Remove saved subtitle"
+                          className='p-1 text-gray-400 opacity-0 transition-all group-hover:opacity-100 hover:text-red-500'
+                          title='Remove saved subtitle'
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className='h-3 w-3' />
                         </button>
                       </div>
-                      
                     </div>
 
                     {/* Subtitle Content */}
                     <div
-                      className="cursor-pointer bg-gray-50 rounded p-2 mb-2 hover:bg-gray-100 transition-colors"
+                      className='mb-2 cursor-pointer rounded bg-gray-50 p-2 transition-colors hover:bg-gray-100'
                       onClick={() => handlePlaySavedSubtitle(savedSubtitle)}
                     >
-                      <p className="text-sm text-gray-800 mb-1 line-clamp-2">
+                      <p className='mb-1 line-clamp-2 text-sm text-gray-800'>
                         {savedSubtitle.subtitleText}
                       </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-xs text-gray-500">
-                          <Clock className="w-3 h-3 mr-1" />
+                      <div className='flex items-center justify-between'>
+                        <div className='flex items-center text-xs text-gray-500'>
+                          <Clock className='mr-1 h-3 w-3' />
                           {formatTime(savedSubtitle.subtitleStart)}
                         </div>
-                        <button className="text-green-600 hover:text-green-700 p-1">
-                          <Play className="w-3 h-3" />
+                        <button className='p-1 text-green-600 hover:text-green-700'>
+                          <Play className='h-3 w-3' />
                         </button>
                       </div>
                     </div>
 
                     {/* Saved Date */}
-                    <div className="text-xs text-gray-400">Saved
+                    <div className='text-xs text-gray-400'>
+                      Saved
                       {/* Saved {formatDate(savedSubtitle.savedAt)} */}
                     </div>
                   </div>
                 ))
               )}
+<<<<<<< HEAD
             </div> 
+=======
+            </div>
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d
           </div>
         </section>
-              )}
+      )}
 
-        {/* Sort Modal */}
-    {showSortModal && (
-      <div 
-      onClick={() => setShowSortModal(false)}
-      className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
-        <div 
-        className="bg-white rounded-lg p-6 w-80 mx-4"
-        onClick={(e) => e.stopPropagation()}
+      {/* Sort Modal */}
+      {showSortModal && (
+        <div
+          onClick={() => setShowSortModal(false)}
+          className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black/30'
         >
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Change Subtitle Position
-          </h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Vị trí hiện tại
-              </label>
-              <div className="text-lg font-bold text-blue-600">
-                #{selectedSubtitleIndex + 1}
+          <div
+            className='mx-4 w-80 rounded-lg bg-white p-6'
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className='mb-4 text-lg font-semibold text-gray-800'>
+              Change Subtitle Position
+            </h3>
+
+            <div className='space-y-4'>
+              <div>
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
+                  Vị trí hiện tại
+                </label>
+                <div className='text-lg font-bold text-blue-600'>
+                  #{selectedSubtitleIndex + 1}
+                </div>
+              </div>
+
+              <div>
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
+                  Di chuyển đến vị trí
+                </label>
+                <input
+                  type='number'
+                  min='1'
+                  max={savedSubtitles.length}
+                  value={newPosition}
+                  onChange={(e) => setNewPosition(e.target.value)}
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 text-black focus:ring-2 focus:ring-blue-500 focus:outline-none'
+                  placeholder={`Enter 1-${savedSubtitles.length}`}
+                />
               </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Di chuyển đến vị trí
-              </label>
-              <input
-                type="number"
-                min="1"
-                max={savedSubtitles.length}
-                value={newPosition}
-                onChange={(e) => setNewPosition(e.target.value)}
-                className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={`Enter 1-${savedSubtitles.length}`}
-              />
+
+            <div className='mt-6 flex justify-end gap-3'>
+              <button
+                onClick={() => setShowSortModal(false)}
+                className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmSort}
+                disabled={
+                  !newPosition ||
+                  Number(newPosition) < 1 ||
+                  Number(newPosition) > savedSubtitles.length
+                }
+                className='rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300'
+              >
+                Confirm
+              </button>
             </div>
           </div>
-          
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              onClick={() => setShowSortModal(false)}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleConfirmSort}
-              disabled={!newPosition || Number(newPosition) < 1 || Number(newPosition) > savedSubtitles.length}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Confirm
-            </button>
-          </div>
         </div>
-      </div>
-    )}
-  </>;
+      )}
+    </>
+  )
 })

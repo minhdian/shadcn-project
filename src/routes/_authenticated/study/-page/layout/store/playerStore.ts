@@ -1,8 +1,12 @@
 import { useCallback } from 'react'
 import { makeAutoObservable } from 'mobx'
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storePlayer.ts
 import { favoriteStore } from './storeFavorite'
 import { VirtuosoHandle } from 'react-virtuoso'
 import { savedSubtitlesStore } from './storeSavedSubtitle'
+=======
+import { favoriteStore } from './favoriteStore'
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/playerStore.ts
 
 export interface IPlayerControls {
   isPlaying: boolean
@@ -221,9 +225,12 @@ class PlayerStore {
       })
     }
   }
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storePlayer.ts
 
   
 
+=======
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/playerStore.ts
 }
 export const playerStore = new PlayerStore()
 // const playerStoreContext = createContext(playerStore);
@@ -235,11 +242,19 @@ export const usePlayerStore = () => {
       console.log('Player ref set:', ref)
     }
   }, [])
+<<<<<<< HEAD:src/routes/_authenticated/study/-page/layout/storePlayer.ts
   
   // Nhận ref của Virtuoso
   const handleVirtuosoRef = useCallback((ref: any) => {
     if (ref) {
       playerStore.virtuosoRef = ref 
+=======
+
+  // Nhận ref của Virtuoso
+  const handleVirtuosoRef = useCallback((ref: any) => {
+    if (ref) {
+      playerStore.virtuosoRef = ref
+>>>>>>> 71dd11bdd04c2dda181a5b392340b4ccdbe2097d:src/routes/_authenticated/study/-page/layout/store/playerStore.ts
       // console.log("🌀 Virtuoso ref set:", ref)
     }
   }, [])
